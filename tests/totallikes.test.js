@@ -18,7 +18,7 @@ describe('Total likes', () => {
 
     const emptyList = []
 
-    test('of empty list is zero', () => {
+    test('of an empty list is zero', () => {
         assert.strictEqual(listHelper.totalLikes(emptyList), NaN)
     })
 
