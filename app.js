@@ -1,9 +1,10 @@
-const config = require('./utils/config')
-const express = require('express')
 const app = express()
-const cors = require('cors')
+const config = require('./utils/config')
 const blogsRouter = require('./controllers/blogs')
 const logger = require('./utils/logger')
+const express = require('express')
+const cors = require('cors')
+
 const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
