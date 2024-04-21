@@ -13,7 +13,7 @@ const testDataset = [
         title: "Balling in Bombay",
         author: "Bob Roberts",
         url: "http://ballinginbombay.now",
-        likes: 5
+        likes: 5,
     },
     {
         title: `John's dull doughs`,
@@ -56,6 +56,13 @@ test('The first blog is about Bombay', async () => {
     const res = await api.get('/api/blogs')
     const titles = res.body.map(e => e.title)
     assert(titles.includes('Balling in Bombay'))
+})
+
+test('The blogs have a field named "id" ', async () => {
+    const res = await api.get('/api/blogs')
+    const ids = res.body.map(e => e.id)
+    const ans = ids.every(i => typeof(i) === 'string')
+    assert.strictEqual(ans, true)
 })
 
 after(async () => {
