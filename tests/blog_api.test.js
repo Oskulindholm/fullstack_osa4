@@ -86,7 +86,41 @@ test('A valid blog can be added', async () => {
     assert(titles.includes('Test Blog'))
 })
 
-test.only('A blog without declared likes has 0 likes', async () => {
+test('A blog with missing url cannot be added', async () => {
+    const newBlog = {
+        title: "Test Blog",
+        author: 'Tester',
+        likes: 3
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+    
+    const res = await api.get('/api/blogs')
+
+    assert.strictEqual(res.body.length, testDataset.length)
+})
+
+test('A blog with missing title cannot be added', async () => {
+    const newBlog = {
+        author: 'Tester',
+        url: 'helloworld.com',
+        likes: 3
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+        
+    const res = await api.get('/api/blogs')
+
+    assert.strictEqual(res.body.length, testDataset.length)
+})
+
+test('A blog without declared likes has 0 likes', async () => {
     const newBlog = {
         title: 'Test Blog',
         author: 'Tester',
