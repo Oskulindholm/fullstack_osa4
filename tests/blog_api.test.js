@@ -10,9 +10,9 @@ const api = supertest(app)
 
 const testDataset = [
     {
-        title: "Balling in Bombay",
-        author: "Bob Roberts",
-        url: "http://ballinginbombay.now",
+        title: 'Balling in Bombay',
+        author: 'Bob Roberts',
+        url: 'http://ballinginbombay.now',
         likes: 5,
     },
     {
@@ -63,6 +63,27 @@ test('The blogs have a field named "id" ', async () => {
     const ids = res.body.map(e => e.id)
     const ans = ids.every(i => typeof(i) === 'string')
     assert.strictEqual(ans, true)
+})
+
+test('A valid blog can be added', async () => {
+    const newBlog = {
+        title: 'Test Blog',
+        author: 'Tester',
+        url: 'helloworld.com',
+        likes: 0
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const res = await api.get('/api/blogs')
+    assert.strictEqual(res.body.length, testDataset.length + 1)
+
+    const titles = res.body.map(e => e.title)
+    assert(titles.includes('Test Blog'))
 })
 
 after(async () => {
