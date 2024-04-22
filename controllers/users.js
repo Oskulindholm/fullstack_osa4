@@ -9,6 +9,15 @@ usersRouter.get('/', async (req, res) => {
 
 usersRouter.post('/', async (req, res) => {
   const { username, name, password } = req.body
+  if (password.length < 3) {
+    return res.status(400).json({ error: 'password is too short or missing'}) }
+  if (username.length < 3) {
+    return res.status(400).json({ error: 'username is too short or missing'}) }
+  const nameDouble = await User.find({ username: `${username}` })
+  if (nameDouble.length > 0) {
+    return res.status(400).json({ error: 'username is not unique'})
+  }
+
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)
 

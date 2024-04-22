@@ -6,16 +6,15 @@ const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
 
-
 const api = supertest(app)
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-    let blogObj = new Blog(helper.testDataset[0])
+    let blogObj = new Blog(helper.blogDataset[0])
     await blogObj.save()
-    blogObj = new Blog(helper.testDataset[1])
+    blogObj = new Blog(helper.blogDataset[1])
     await blogObj.save()
-    blogObj = new Blog(helper.testDataset[2])
+    blogObj = new Blog(helper.blogDataset[2])
     await blogObj.save()
 })
 
@@ -63,7 +62,7 @@ describe('POST requests', () => {
             .expect('Content-Type', /application\/json/)
     
         const res = await api.get('/api/blogs')
-        assert.strictEqual(res.body.length, helper.testDataset.length + 1)
+        assert.strictEqual(res.body.length, helper.blogDataset.length + 1)
     
         const titles = res.body.map(e => e.title)
         assert(titles.includes('Test Blog'))
@@ -83,7 +82,7 @@ describe('POST requests', () => {
         
         const res = await api.get('/api/blogs')
     
-        assert.strictEqual(res.body.length, helper.testDataset.length)
+        assert.strictEqual(res.body.length, helper.blogDataset.length)
     })
     
     test('a blog with missing title cannot be added (400)', async () => {
@@ -100,7 +99,7 @@ describe('POST requests', () => {
             
         const res = await api.get('/api/blogs')
     
-        assert.strictEqual(res.body.length, helper.testDataset.length)
+        assert.strictEqual(res.body.length, helper.blogDataset.length)
     })
     
     test('a blog without declared likes has 0 likes', async () => {
@@ -135,13 +134,13 @@ describe('DELETE requests', () => {
         const blogsAtEnd = await helper.blogsInDb()
         const titles = blogsAtEnd.map(b => b.title)
 
-        assert.strictEqual(blogsAtEnd.length, helper.testDataset.length - 1)
+        assert.strictEqual(blogsAtEnd.length, helper.blogDataset.length - 1)
         assert(!titles.includes(blogToDelete.title))
     })
     
     test('a blog with an incorrect id cannot be deleted (400)', async () => {
         const initialBlogs = await helper.blogsInDb()
-        const invalidId = await helper.nonExistingId()
+        const invalidId = await helper.nonExistingBlogId()
 
         await api
             .delete(`/api/blogs/${invalidId.id}`)
@@ -149,7 +148,7 @@ describe('DELETE requests', () => {
         
         const blogsAtEnd = await helper.blogsInDb()
 
-        assert.strictEqual(blogsAtEnd.length, helper.testDataset.length)
+        assert.strictEqual(blogsAtEnd.length, helper.blogDataset.length)
     })
 })
 
@@ -178,7 +177,7 @@ describe('PUT requests', () => {
 
     test('a blog with invalid id cannot be updated (400)', async () => {
         const initialBlogs = await helper.blogsInDb()
-        const invalidId = await helper.nonExistingId()
+        const invalidId = await helper.nonExistingBlogId()
 
         await api
             .put(`/api/blogs/${invalidId.id}`, {})

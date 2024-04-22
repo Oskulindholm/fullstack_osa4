@@ -1,6 +1,7 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
-const testDataset = [
+const blogDataset = [
     {
         title: 'Balling in Bombay',
         author: 'Bob Roberts',
@@ -21,12 +22,30 @@ const testDataset = [
     }
 ]
 
+const userDataset = [
+    {
+        username: 'Gorgon',
+        name: 'Gary',
+        password: 'gary'
+    },
+    {
+        username: 'JeeperCreeper',
+        name: 'Jerry',
+        password: 'jerry'
+    },
+    {
+        username: '360_noScope_proX',
+        name: 'Howard',
+        password: 'lol'
+    }
+]
+
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
     return blogs.map(b => b.toJSON())
 }
 
-const nonExistingId = async () => {
+const nonExistingBlogId = async () => {
     const blog = new Blog({ title: 'asdf', author: 'jkl', url: 'qwerty' })
     await blog.save()
     const id = blog._id.toString()
@@ -35,5 +54,8 @@ const nonExistingId = async () => {
 }
 
 module.exports = {
-    testDataset, blogsInDb, nonExistingId
+    blogDataset,
+    userDataset,
+    blogsInDb,
+    nonExistingBlogId
 }
