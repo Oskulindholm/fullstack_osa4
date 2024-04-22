@@ -15,6 +15,7 @@ blogsRouter.post('/', async (req, res) => {
     res.status(400).end()
   }
 })
+
 blogsRouter.put('/:id', async (req, res) => {
   try {
     const blog = await Blog.findByIdAndUpdate(req.params.id, req.body, {new: true})
