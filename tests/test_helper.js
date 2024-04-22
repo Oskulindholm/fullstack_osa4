@@ -45,6 +45,11 @@ const blogsInDb = async () => {
     return blogs.map(b => b.toJSON())
 }
 
+const usersInDb = async () => {
+    const users = await User.find({})
+    return users.map(u => u.toJSON())
+}
+
 const nonExistingBlogId = async () => {
     const blog = new Blog({ title: 'asdf', author: 'jkl', url: 'qwerty' })
     await blog.save()
@@ -57,5 +62,6 @@ module.exports = {
     blogDataset,
     userDataset,
     blogsInDb,
+    usersInDb,
     nonExistingBlogId
 }

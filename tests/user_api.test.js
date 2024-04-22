@@ -2,6 +2,7 @@ const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const app = require('../app')
 const User = require('../models/user')
 const helper = require('./test_helper')
@@ -50,7 +51,7 @@ describe('POST requests', () => {
         assert.strictEqual(res.body.length, helper.userDataset.length + 1)
     
         const usernames = res.body.map(e => e.username)
-        assert(usernames.includes('Morrig4n'))
+        assert(usernames.includes(newUser.username))
     })
 
     test('a user with missing username cannot be added (400)', async () => {
@@ -60,15 +61,16 @@ describe('POST requests', () => {
             password: 'geronimo'
         }
     
-        await api
+        const res = await api
             .post('/api/users')
             .send(newUser)
             .expect(400)
             .expect('Content-Type', /application\/json/)
         
-        const res = await api.get('/api/users')
+        const usersAtEnd = await api.get('/api/users')
+        assert(res.body.error.includes('username is too short or missing'))
     
-        assert.strictEqual(res.body.length, helper.userDataset.length)
+        assert.strictEqual(usersAtEnd.body.length, helper.userDataset.length)
     })
 
     test('a user with a too short password cannot be added (400)', async () => {
@@ -78,15 +80,16 @@ describe('POST requests', () => {
             password: 'a'
         }
     
-        await api
+        const res = await api
             .post('/api/users')
             .send(newUser)
             .expect(400)
             .expect('Content-Type', /application\/json/)
         
-        const res = await api.get('/api/users')
+        const usersAtEnd = await api.get('/api/users')
+        assert(res.body.error.includes('password is too short or missing'))
     
-        assert.strictEqual(res.body.length, helper.userDataset.length)
+        assert.strictEqual(usersAtEnd.body.length, helper.userDataset.length)
     })
 
     test('a user with an already existing username cannot be added (400)', async () => {
@@ -96,15 +99,16 @@ describe('POST requests', () => {
             password: 'muahahaha'
         }
     
-        await api
+        const res = await api
             .post('/api/users')
             .send(newUser)
             .expect(400)
             .expect('Content-Type', /application\/json/)
         
-        const res = await api.get('/api/users')
+        const usersAtEnd = await api.get('/api/users')
+        assert(res.body.error.includes('username is not unique'))
     
-        assert.strictEqual(res.body.length, helper.userDataset.length)
+        assert.strictEqual(usersAtEnd.body.length, helper.userDataset.length)
     })
 })
 
