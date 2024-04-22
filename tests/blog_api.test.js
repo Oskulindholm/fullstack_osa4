@@ -145,7 +145,7 @@ describe('DELETE requests', () => {
 
         await api
             .delete(`/api/blogs/${invalidId.id}`)
-            .expect(400)
+            .expect(404)
         
         const blogsAtEnd = await helper.blogsInDb()
 
@@ -153,7 +153,42 @@ describe('DELETE requests', () => {
     })
 })
 
+describe('PUT requests', () => {
+    test('all text fields of a blog can be updated successfully (204)', async () => {
+        const initialBlogs = await helper.blogsInDb()
+        const oldBlog = initialBlogs[0]
+        const id = oldBlog.id
+        const updBlog = {
+            title: 'Updated title',
+            author: 'Updated author',
+            url: 'Updated url',
+            likes: 100
+        }
 
+        await api
+            .put(`/api/blogs/${oldBlog.id}`)
+            .send(updBlog)
+            .expect(204)
+            
+        const updDb = await helper.blogsInDb()
+
+        assert.deepStrictEqual(oldBlog !== updBlog, true)
+        assert.deepStrictEqual(updBlog.title, updDb[0].title)
+    })
+
+    test('a blog with invalid id cannot be updated (400)', async () => {
+        const initialBlogs = await helper.blogsInDb()
+        const invalidId = await helper.nonExistingId()
+
+        await api
+            .put(`/api/blogs/${invalidId.id}`, {})
+            .expect(404)
+        
+        const blogsAtEnd = await helper.blogsInDb()
+
+        assert.deepStrictEqual(blogsAtEnd, initialBlogs)
+    })
+})
 
 
 after(async () => {
