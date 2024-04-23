@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs/
 Content-Type: application/json
 
 {
-    "title": "Balling in Bombay",
-    "author": "Bob Roberts",
-    "url": "http://ballinginbombay.now",
-    "likes": 5
+    "title": "Duckburger Post",
+    "author": "Donald Duckington",
+    "url": "http://duckburger.post",
+    "likes": 7,
+    "user": "662689938187a4b1e3233aa6"
 }
