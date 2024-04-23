@@ -1,10 +1,11 @@
 POST http://localhost:3003/api/blogs/
 Content-Type: application/json
+Authorization: Bearer 8l0giL1s7aaV4rt3nLu07uT0k3n
 
 {
-    "title": "Duckburger Post",
-    "author": "Donald Duckington",
-    "url": "http://duckburger.post",
+    "title": "Goose News",
+    "author": "Don Goojote",
+    "url": "http://goosenews.info",
     "likes": 7,
     "user": "662689938187a4b1e3233aa6"
 }
