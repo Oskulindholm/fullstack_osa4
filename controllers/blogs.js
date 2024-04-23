@@ -3,18 +3,6 @@ const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
-/*const getTokenFrom = req => {
-  try {
-    const authorization = req.get('authorization')
-    if (authorization && authorization.startsWith('Bearer ')) {
-      return authorization.replace('Bearer ', '')
-    }
-  } catch (error) {
-    console.log(error)
-  }
-  return null
-}*/
-
 blogsRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1})
   res.json(blogs)
@@ -53,10 +41,21 @@ blogsRouter.put('/:id', async (req, res) => {
 
 blogsRouter.delete('/:id', async (req, res) => {
   try {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+    const blogToDelete = await Blog.findById(req.params.id)
+    if (!blogToDelete) {
+      return res.status(404).end()
+    }
+    if (!decodedToken) {
+      return res.status(401).json({ error: 'token invalid' })
+    }
+    if (blogToDelete.user && blogToDelete.user.toString() !== decodedToken.id) {
+      return res.status(401).json({ error: 'invalid user to complete this operation'})
+    }
     await Blog.findByIdAndDelete(req.params.id)
     res.status(204).end()
   } catch {
-    res.status(404).end()
+    res.status(401).json({ error: 'invalid token' })
   }
 })
 
