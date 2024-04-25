@@ -1,11 +1,11 @@
 POST http://localhost:3003/api/blogs/
 Content-Type: application/json
-Authorization: Bearer 8l0giL1s7aaV4rt3nLu07uT0k3n
+Authorization: Bearer He2s6Ut5HdkI63B9v0wIDc
 
 {
-    "title": "Goose News",
-    "author": "Don Goojote",
-    "url": "http://goosenews.info",
-    "likes": 7,
+    "title": "Lorem Ipsum",
+    "author": "Sit Amet",
+    "url": "http://lorem.ipsum",
+    "likes": 0,
     "user": "662689938187a4b1e3233aa6"
 }

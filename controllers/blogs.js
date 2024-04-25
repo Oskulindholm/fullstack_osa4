@@ -17,8 +17,9 @@ blogsRouter.post('/', async (req, res) => {
       return res.status(401).json({ error: 'token invalid' })
     }
 
-    const user = await User.findById(decodedToken.id)
-    req.body.user = decodedToken.id
+    const user = req.user
+    req.body.user = req.user.id
+
     const newBlog = new Blog(req.body)
 
     const blog = await newBlog.save()
@@ -46,16 +47,16 @@ blogsRouter.delete('/:id', async (req, res) => {
     if (!blogToDelete) {
       return res.status(404).end()
     }
-    if (!decodedToken) {
+    if (!req.user.id) {
       return res.status(401).json({ error: 'token invalid' })
     }
-    if (blogToDelete.user && blogToDelete.user.toString() !== decodedToken.id) {
+    if (blogToDelete.user && blogToDelete.user.toString() !== req.user.id.toString()) {
       return res.status(401).json({ error: 'invalid user to complete this operation'})
     }
     await Blog.findByIdAndDelete(req.params.id)
     res.status(204).end()
   } catch {
-    res.status(401).json({ error: 'invalid token' })
+    res.status(401).json({ error: 'invalid operation' })
   }
 })
 
